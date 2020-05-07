@@ -4,7 +4,7 @@ version: 2.1
 executors:
   gcc7:
     docker:
-      - image: gcc:7
+      - image: conanio/gcc7
         environment:
           CXX: g++
           CC: gcc
@@ -49,11 +49,6 @@ executors:
 
 # Reusable test commands (and initializer for clang 6)
 commands:
-  install_cmake:
-    steps:
-      - run: apt-get update -qq
-      - run: apt-get install -y cmake
-
   cmake_prep:
     steps:
       - checkout
@@ -94,7 +89,7 @@ jobs:
     description: Build and run tests on GCC 7 and AVX 2 with a cmake static build
     executor: gcc7
     environment: { CMAKE_FLAGS: -DSIMDJSON_GOOGLE_BENCHMARKS=ON }
-    steps: [ install_cmake, cmake_test_all, cmake_install_test ]
+    steps: [ cmake_test_all, cmake_install_test ]
   clang6:
     description: Build and run tests on clang 6 and AVX 2 with a cmake static build
     executor: clang6
@@ -110,7 +105,7 @@ jobs:
   sanitize-gcc9:
     description: Build and run tests on GCC 9 and AVX 2 with a cmake sanitize build
     executor: gcc9
-    environment: { CMAKE_FLAGS: -DSIMDJSON_BUILD_STATIC=OFF -DSIMDJSON_SANITIZE=ON, CTEST_FLAGS: -j4 --output-on-failure -E checkperf }
+    environment: { CMAKE_FLAGS: -DSIMDJSON_BUILD_STATIC=OFF -DSIMDJSON_SANITIZE=ON, BUILD_FLAGS: "-j4", CTEST_FLAGS: -j4 --output-on-failure -E checkperf }
     steps: [ cmake_test_all ]
   sanitize-clang9:
     description: Build and run tests on clang 6 and AVX 2 with a cmake sanitize build
