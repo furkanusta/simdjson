@@ -129,7 +129,7 @@ jobs:
     executor: clang9
     environment: { CMAKE_FLAGS: -DSIMDJSON_BUILD_STATIC=OFF }
     steps: [ cmake_test, cmake_install_test ]
-  
+
   # unthreaded
   unthreaded-gcc9:
     description: Build and run tests on GCC 7 and AVX 2 *without* threads
@@ -182,10 +182,10 @@ workflows:
       # full multi-implementation tests
       - gcc7
       - clang6
-      
+
       # libc++
-      # - libcpp-clang9 # disabled due to too many errors
-      
+      - libcpp-clang9 # disabled due to too many errors
+
       # full single-implementation tests
       - sanitize-gcc9
       - sanitize-clang9
@@ -198,6 +198,5 @@ workflows:
       - arch-haswell-gcc9
       - arch-nehalem-gcc9
       - no-computed-goto-gcc9
-    
-      # TODO add windows: https://circleci.com/docs/2.0/configuration-reference/#windows
 
+      # TODO add windows: https://circleci.com/docs/2.0/configuration-reference/#windows
