@@ -11,17 +11,17 @@ foreach (_name ${cmake_variables})
   endif()
 endforeach()
 
+list(REMOVE_ITEM checkperf_variables SIMDJSON_COMPETITION SIMDJSON_GOOGLE_BENCHMARKS)
+list(APPEND checkperf_variables -DSIMDJSON_COMPETITION=OFF -DSIMDJSON_GOOGLE_BENCHMARKS=OFF)
 include(ExternalProject)
 ExternalProject_Add(checkperf-repo
   GIT_REPOSITORY "https://www.github.com/simdjson/simdjson"
   GIT_SHALLOW TRUE
-  EXCLUDE_FROM_ALL TRUE
   BUILD_ALWAYS TRUE
   CMAKE_ARGS -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER} -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
              -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -G ${CMAKE_GENERATOR}
              ${checkperf_variables}
   GIT_SUBMODULES ""
-  EXCLUDE_FROM_ALL ON
   BUILD_COMMAND ${CMAKE_COMMAND} --build <BINARY_DIR> --target parse --config $<CONFIGURATION>
   TEST_COMMAND ""
   TEST_EXCLUDE_FROM_MAIN ON
