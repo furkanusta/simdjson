@@ -36,3 +36,5 @@ add_test(
   NAME checkperf
   COMMAND $<TARGET_FILE:perfdiff> $<TARGET_FILE:parse> ${CHECKPERF_PARSE} -H -t ${SIMDJSON_CHECKPERF_ARGS}
 )
+
+set_test_properties(TEST checkperf PROPERTIES LABELS per_implementation RUN_SERIAL TRUE)
