@@ -6,7 +6,9 @@ get_cmake_property(cmake_variables VARIABLES)
 set(checkperf_variables "")
 foreach (_name ${cmake_variables})
   set(_value ${${_name}})
-  list(APPEND checkperf_variables "-D${_name}=${_value}")
+  if (_name MATCHES "SIMDJSON_") # OR _name MATCHES "CMAKE_"
+    list(APPEND checkperf_variables "-D${_name}=${_value}")
+  endif()
 endforeach()
 
 include(ExternalProject)
@@ -15,7 +17,9 @@ ExternalProject_Add(checkperf-repo
   GIT_SHALLOW TRUE
   EXCLUDE_FROM_ALL TRUE
   BUILD_ALWAYS TRUE
-  CMAKE_ARGS ${checkperf_variables}
+  CMAKE_ARGS -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER} -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -G ${CMAKE_GENERATOR}
+             ${checkperf_variables}
   GIT_SUBMODULES ""
   EXCLUDE_FROM_ALL ON
   BUILD_COMMAND ${CMAKE_COMMAND} --build <BINARY_DIR> --target parse --config $<CONFIGURATION>
@@ -37,4 +41,6 @@ add_test(
   COMMAND $<TARGET_FILE:perfdiff> $<TARGET_FILE:parse> ${CHECKPERF_PARSE} -H -t ${SIMDJSON_CHECKPERF_ARGS}
 )
 
-set_test_properties(TEST checkperf PROPERTIES LABELS per_implementation RUN_SERIAL TRUE)
+set_property(TEST checkperf PROPERTY RUN_SERIAL TRUE)
+set_property(TEST checkperf APPEND PROPERTY DEPENDS parse perfdiff checkperf-repo)
+set_property(TEST checkperf APPEND PROPERTY LABELS per_implementation)
